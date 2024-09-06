@@ -14,20 +14,21 @@ go build
 ```
 
 ## Configuration
-`target_dir_strategy` would search the `source_dirs` files if it exists in the `target_dir` and deletes or symlinks them.
+`source_to_target_dedupe` would search the `source_dirs` files if it exists in the `target_dir` and deletes or symlinks them.
 ```json
 {
     "version": "0.1",
-    "target_dir_strategy": {
+    "name1": {
+        "strategy": "source_to_target_dedupe",
         "target_dir": "path/to/target/dir",
         "target_dir_recursive": true,
         "source_dirs": [
             {
-                "source_dir": "path/to/source/dir",
+                "path": "path/to/source/dir",
                 "recursive": true
             },
             {
-                "source_dir": "path/to/source/dir",
+                "path": "path/to/source/dir",
                 "recursive": true
             }
         ]
@@ -39,7 +40,8 @@ go build
 ```json
 {
     "version": "0.1",
-    "pdf_mover": {
+    "name2": {
+        "strategy": "pdf_mover",
         "pdf_matcher": "conference_paper_detector",
         "target_dir": {
             "path": "path/to/target/dir",

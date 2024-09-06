@@ -112,7 +112,7 @@ func (strategy *SourceToTargetDedupeStrategy) Execute(parms ExecuteArgs) error {
 			// check if file duplicates
 			if targetEntries, ok := sizeIndex[entry.size]; ok {
 				for _, targetEntry := range targetEntries {
-					if entry.Equal(&targetEntry) {
+					if entry.Equal(&targetEntry) && entry.path != targetEntry.path {
 						duplicateHandler(entry, targetEntry, parms, *strategy)
 					}
 				}

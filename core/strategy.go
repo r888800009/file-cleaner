@@ -66,10 +66,10 @@ func duplicateHandler(clean FileEntry, keep FileEntry, parms ExecuteArgs, strate
 	// move to trash
 	absPath, _ := filepath.Abs(clean.path)
 	trashPath := filepath.Join(strategy.trashPath, absPath)
-	os.MkdirAll(strategy.trashPath, os.ModePerm)
 	fmt.Println("    Moving to trash:", clean.path)
 	fmt.Println("    Trash Path:", trashPath)
 	if !parms.cmd.DryRun {
+		os.MkdirAll(filepath.Dir(trashPath), os.ModePerm)
 		os.Rename(clean.path, trashPath)
 	} else {
 		fmt.Println("    Dry Run: Not moving to trash")

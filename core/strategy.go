@@ -87,38 +87,88 @@ func duplicateHandler(clean FileEntry, keep FileEntry, parms ExecuteArgs, strate
 
 }
 
-func IsPathNotIndepent(path1 string, path2 string) (bool, error) {
-	path1 = filepath.Clean(path1)
-	path2 = filepath.Clean(path2)
-	path1, err := filepath.Abs(path1)
+func pathNomalize(path string) (string, error) {
+	path = filepath.Clean(path)
+	path, err := filepath.Abs(path)
 	if err != nil {
-		return true, err
+		return "", err
 	}
+	path += string(filepath.Separator)
+	return path, nil
+}
 
-	path2, err = filepath.Abs(path2)
+/*
+PathNomalizePair normalize the path and return the normalized path
+*/
+func PathNomalizePair(path1 string, path2 string) (string, string, error) {
+	path1, err := pathNomalize(path1)
 	if err != nil {
-		return true, err
+		return "", "", err
 	}
 
-	// add separator to the end of the path
-	path1 += string(filepath.Separator)
-	path2 += string(filepath.Separator)
-
-	if path1 == path2 {
-		return true, nil
+	path2, err = pathNomalize(path2)
+	if err != nil {
+		return "", "", err
 	}
 
+	// return: set path1 to be the shorter one
+	return path1, path2, nil
+}
+
+// check if path1 is subpath of path2
+// it path1 should be shorter than path2
+func checkIsSubPath(path1 string, path2 string) bool {
+	return path2[:len(path1)] == path1
+}
+
+func SetShorterPathFirst(path1 string, path2 string) (string, string, bool) {
+	swapped := false
 	// set path1 to be the shorter one
 	if len(path1) > len(path2) {
 		path1, path2 = path2, path1
+		swapped = true
+	}
+	return path1, path2, swapped
+}
+
+func IsPathNotIndepent(path1 string, path2 string) (bool, error) {
+	path1, path2, err := PathNomalizePair(path1, path2)
+	if err != nil {
+		return true, err
 	}
 
-	// check if path1 is subpath of path2
-	if path2[:len(path1)] == path1 {
-		return true, nil
+	path1, path2, _ = SetShorterPathFirst(path1, path2)
+	return checkIsSubPath(path1, path2), nil
+}
+
+func IsPathNotIndepentRecursive(path1 string, recPath1 bool, path2 string, recPath2 bool) (bool, error) {
+	if recPath1 && recPath2 {
+		return IsPathNotIndepent(path1, path2)
 	}
 
-	return false, nil
+	path1, path2, err := PathNomalizePair(path1, path2)
+	if err != nil {
+		return true, err
+	}
+
+	// make sure path1 is shorter
+	path1, path2, swapped := SetShorterPathFirst(path1, path2)
+	if swapped {
+		recPath1, recPath2 = recPath2, recPath1
+	}
+
+	// if we recursive /etc, but not recursive /etc/hosts, it not independent
+	if recPath1 && !recPath2 {
+		return checkIsSubPath(path1, path2), nil
+	}
+
+	// if we not recursive /etc, but recursive /etc/hosts, it is independent
+	if !recPath1 && recPath2 {
+		return false, nil
+	}
+
+	// if we not recursive path1 and path2, it is independent only if path1 not equal to path2
+	return path1 == path2, nil
 }
 
 func (strategy *SourceToTargetDedupeStrategy) Execute(parms ExecuteArgs) error {
@@ -138,13 +188,13 @@ func (strategy *SourceToTargetDedupeStrategy) Execute(parms ExecuteArgs) error {
 	}
 
 	for _, source := range strategy.source {
-		notIndepent, err := IsPathNotIndepent(source.path, strategy.target.path)
+		notIndepent, err := IsPathNotIndepentRecursive(source.path, source.recursively, strategy.target.path, strategy.target.recursively)
 		if err != nil {
 			return err
 		}
 
 		if notIndepent {
-			panic("current not support source and target are the same")
+			panic(fmt.Sprintf("current not support source and target are the same %s %s", source.path, strategy.target.path))
 		}
 
 		fmt.Println("Source:", source.path)

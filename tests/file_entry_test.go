@@ -46,3 +46,47 @@ func TestIsPathNotIndepent(t *testing.T) {
 	assert.True(file_cleaner.IsPathNotIndepent(".", "/bin"))
 	assert.True(file_cleaner.IsPathNotIndepent("./", "/bin/vim"))
 }
+
+func TestPathNomalizePair(t *testing.T) {
+	assert := assert.New(t)
+	path1, path2, err := file_cleaner.PathNomalizePair("/etc/hosts", "/etc")
+	path1, path2, swapped := file_cleaner.SetShorterPathFirst(path1, path2)
+	assert.Nil(err)
+
+	// first path should be shorter
+	assert.Equal("/etc/", path1)
+	assert.Equal("/etc/hosts/", path2)
+	assert.True(swapped)
+}
+
+/*
+this test consider if the path recursive=false
+*/
+func TestIsPathNotIndepentRecursiveFalse(t *testing.T) {
+	assert := assert.New(t)
+
+	// if we recursive /etc, but not recursive /etc/hosts, it not independent
+	assert.True(file_cleaner.IsPathNotIndepentRecursive("/etc/hosts", false, "/etc", true))
+
+	// swap the path, it should be the same result
+	assert.True(file_cleaner.IsPathNotIndepentRecursive("/etc", true, "/etc/hosts", false))
+
+	// if we recursive /etc/hosts, but not recursive /etc, it is independent
+	assert.False(file_cleaner.IsPathNotIndepentRecursive("/etc/hosts", true, "/etc", false))
+
+	// if same path, it is not independent
+	assert.True(file_cleaner.IsPathNotIndepentRecursive("/etc/hosts", false, "/etc/hosts", false))
+
+	// if /etc/ not recursive, and /etc/dir not recursive, it is independent
+	// because we search /etc/* not include /etc/dir/*
+	assert.False(file_cleaner.IsPathNotIndepentRecursive("/etc/dir", false, "/etc", false))
+
+	// diffent path, it is independent
+	assert.False(file_cleaner.IsPathNotIndepentRecursive("/tmp", false, "/etc", false))
+
+	// same name but different root, it is independent
+	assert.False(file_cleaner.IsPathNotIndepentRecursive("/tmp", false, "/user/tmp", false))
+	assert.False(file_cleaner.IsPathNotIndepentRecursive("/tmp", true, "/user/tmp", true))
+	assert.False(file_cleaner.IsPathNotIndepentRecursive("/tmp", false, "/user/tmp", true))
+	assert.False(file_cleaner.IsPathNotIndepentRecursive("/tmp", true, "/user/tmp", false))
+}

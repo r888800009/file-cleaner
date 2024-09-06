@@ -87,6 +87,40 @@ func duplicateHandler(clean FileEntry, keep FileEntry, parms ExecuteArgs, strate
 
 }
 
+func IsPathNotIndepent(path1 string, path2 string) (bool, error) {
+	path1 = filepath.Clean(path1)
+	path2 = filepath.Clean(path2)
+	path1, err := filepath.Abs(path1)
+	if err != nil {
+		return true, err
+	}
+
+	path2, err = filepath.Abs(path2)
+	if err != nil {
+		return true, err
+	}
+
+	// add separator to the end of the path
+	path1 += string(filepath.Separator)
+	path2 += string(filepath.Separator)
+
+	if path1 == path2 {
+		return true, nil
+	}
+
+	// set path1 to be the shorter one
+	if len(path1) > len(path2) {
+		path1, path2 = path2, path1
+	}
+
+	// check if path1 is subpath of path2
+	if path2[:len(path1)] == path1 {
+		return true, nil
+	}
+
+	return false, nil
+}
+
 func (strategy *SourceToTargetDedupeStrategy) Execute(parms ExecuteArgs) error {
 	fmt.Println("Execute SourceToTargetDedupeStrategy")
 	fmt.Println("Target:", strategy.target.path)
@@ -104,6 +138,15 @@ func (strategy *SourceToTargetDedupeStrategy) Execute(parms ExecuteArgs) error {
 	}
 
 	for _, source := range strategy.source {
+		notIndepent, err := IsPathNotIndepent(source.path, strategy.target.path)
+		if err != nil {
+			return err
+		}
+
+		if notIndepent {
+			panic("current not support source and target are the same")
+		}
+
 		fmt.Println("Source:", source.path)
 		_, sourceFileMap := ListFiles(source)
 

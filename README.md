@@ -14,6 +14,10 @@ go build
 ```bash
 ./file_cleaner -config path/to/config.json
 ```
+for safety, we make the cli tool dry-run by default, you can use `-dry-run=false` to move file to trash.
+```bash
+./file_cleaner -config path/to/config.json -dry-run=false
+```
 
 ## Features
 - [x] `source_to_target_dedupe`

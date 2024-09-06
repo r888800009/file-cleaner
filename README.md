@@ -119,6 +119,21 @@ trash_dir directory structure, each directory is a timestamp (ISO 8601) of the d
     }
 }
 ```
+it supports multiple entries
+```json
+{
+    "version": "0.1",
+    "name3": {
+        "strategy": "source_to_target_dedupe",
+        ...
+    },
+    "name4": {
+        "strategy": "pdf_mover",
+        ...
+    },
+    ...
+}
+```
 
 ## Development
 generate the godoc, if you don't have godoc installed

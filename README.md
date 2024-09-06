@@ -18,6 +18,10 @@ for safety, we make the cli tool dry-run by default, you can use `-dry-run=false
 ```bash
 ./file_cleaner -config path/to/config.json -dry-run=false
 ```
+if you want remove empty trash directory, you can use `find` command to remove them.
+```bash
+find ./trash -type d -empty -delete
+```
 
 ## Features
 - [x] `source_to_target_dedupe`

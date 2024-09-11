@@ -15,6 +15,16 @@ func IsPDF(path string) (bool, error) {
 	}
 	defer file.Close()
 
+	// check if file < 4 bytes
+	stat, err := file.Stat()
+	if err != nil {
+		return false, err
+	}
+
+	if stat.Size() < 4 {
+		return false, nil
+	}
+
 	header := make([]byte, 4)
 	_, err = file.Read(header)
 	if err != nil {

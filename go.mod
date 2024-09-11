@@ -3,17 +3,19 @@ module github.com/r888800009/file_cleaner
 go 1.20
 
 require (
+	github.com/cheggaaa/go-poppler v0.0.1
+	github.com/heussd/pdftotext-go v0.0.0-20240804143356-fe57a0d73567
+	github.com/hillu/go-yara/v4 v4.3.3
+	github.com/stretchr/testify v1.9.0
+)
+
+require (
+	github.com/Masterminds/semver/v3 v3.2.1 // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect
-	github.com/gofrs/flock v0.12.1 // indirect
-	github.com/mitchellh/colorstring v0.0.0-20190213212951-d06e56a500db // indirect
+	github.com/kr/pretty v0.3.1 // indirect
 	github.com/pmezard/go-difflib v1.0.0 // indirect
-	github.com/rivo/uniseg v0.4.7 // indirect
-	github.com/schollz/progressbar/v3 v3.14.6 // indirect
-	github.com/stretchr/testify v1.9.0 // indirect
-	github.com/yuin/goldmark v1.4.13 // indirect
-	golang.org/x/mod v0.20.0 // indirect
-	golang.org/x/sys v0.25.0 // indirect
-	golang.org/x/term v0.24.0 // indirect
-	golang.org/x/tools v0.24.0 // indirect
+	github.com/rogpeppe/go-internal v1.12.0 // indirect
+	github.com/ungerik/go-cairo v0.0.0-20210317133935-984b32e6bac6 // indirect
+	gopkg.in/check.v1 v1.0.0-20201130134442-10cb98267c6c // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 )

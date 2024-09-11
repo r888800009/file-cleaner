@@ -8,6 +8,17 @@ git clone https://github.com/r888800009/file-cleaner
 cd file-cleaner
 go build
 ```
+install dependencies
+- [github.com/jacobkring/go-poppler](https://pkg.go.dev/github.com/jacobkring/go-poppler) need poppler and cairo for pdf_mover strategy
+```bash
+brew install cairo poppler
+export CPATH=/opt/homebrew/include
+```
+Linux
+```bash
+apt-get install libpoppler-glib-dev libcairo2-dev
+```
+
 ## Note: currently file_cleaner is under development, it might not work as expected. or have some bugs cause data loss. you should backup your data before using it. we are not responsible for any data loss.
 
 ## Usage

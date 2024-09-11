@@ -1,2 +1,6 @@
 file_cleaner
 coverprofile.out
+cpu.prof
+flame.svg
+cpu.txt
+trace.out

@@ -9,7 +9,7 @@ cd file-cleaner
 go build
 ```
 install dependencies
-- [github.com/jacobkring/go-poppler](https://pkg.go.dev/github.com/jacobkring/go-poppler) need poppler and cairo for pdf_mover strategy
+- [github.com/jacobkring/go-poppler](https://pkg.go.dev/github.com/jacobkring/go-poppler) need poppler and cairo for pdf_mover strategy, also see commit [e200970](https://github.com/r888800009/file_cleaner/commit/e200970c6b5ee22e4ce148f452401a5f665c967d) for more information.
 ```bash
 brew install cairo poppler
 export CPATH=/opt/homebrew/include
@@ -113,6 +113,7 @@ trash_dir directory structure, each directory is a timestamp (ISO 8601) of the d
 
 `pdf-mover` would move matching files from `source_dir` to `target_dir` based on the `pdf_matcher` configuration.
 - `conference_paper_detector` match keywords such as `usenix`, `ieee`, `acm`, etc. or other heuristics.
+- also see [rules/pdf/Rules.md](rules/pdf/RULES.md) for more information.
 ```json
 {
     "version": "0.1",

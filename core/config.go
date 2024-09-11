@@ -42,6 +42,11 @@ func (dir *DirEntry) Print() {
 	fmt.Println("Path:", dir.path, "Recursively:", dir.recursively)
 }
 
+// create dir entry
+func CreateDirEntry(path string, recursively bool) DirEntry {
+	return DirEntry{path: path, recursively: recursively}
+}
+
 // Load a strategy entry
 func (config *SourceToTargetDedupeStrategy) Load(name string, value map[string]interface{}) error {
 	config.super.name = name

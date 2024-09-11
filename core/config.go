@@ -13,8 +13,12 @@ import (
 )
 
 type DirEntry struct {
-	path         string
-	recursively  bool
+	path        string
+	recursively bool
+
+	// result of List include dirs
+	include_dirs bool // placeholder for future use
+
 	ignore_regex *regexp.Regexp
 	match_regex  *regexp.Regexp
 }
@@ -39,12 +43,7 @@ type Config struct {
 
 // print dir entry
 func (dir *DirEntry) Print() {
-	fmt.Println("Path:", dir.path, "Recursively:", dir.recursively)
-}
-
-// create dir entry
-func CreateDirEntry(path string, recursively bool) DirEntry {
-	return DirEntry{path: path, recursively: recursively}
+	fmt.Println("Path:", dir.path, "Recursively:", dir.recursively, "IncludeDirs:", dir.include_dirs)
 }
 
 // Load a strategy entry
@@ -90,12 +89,19 @@ func expandDir(path string) string {
 	return path
 }
 
+// create dir entry
+func CreateDirEntry(path string, recursively bool) DirEntry {
+	// current not support return include_dirs just placeholder
+	return DirEntry{path: path, recursively: recursively, include_dirs: false}
+}
+
 // Load DirEntry
 func (dirEntry *DirEntry) Load(value map[string]interface{}) {
 	dirEntry.path = value["path"].(string)
 	dirEntry.path = expandDir(dirEntry.path)
 
 	dirEntry.recursively = value["recursive"].(bool)
+	dirEntry.include_dirs = false // placeholder for future use
 
 	// load ignore regex if it exists
 	if ignore, ok := value["ignore"]; ok {

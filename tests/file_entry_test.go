@@ -2,6 +2,8 @@ package file_cleaner
 
 import (
 	"os"
+	"path/filepath"
+	"runtime"
 	"testing"
 
 	file_cleaner "github.com/r888800009/file_cleaner/core"
@@ -89,4 +91,28 @@ func TestIsPathNotIndepentRecursiveFalse(t *testing.T) {
 	assert.False(file_cleaner.IsPathNotIndepentRecursive("/tmp", true, "/user/tmp", true))
 	assert.False(file_cleaner.IsPathNotIndepentRecursive("/tmp", false, "/user/tmp", true))
 	assert.False(file_cleaner.IsPathNotIndepentRecursive("/tmp", true, "/user/tmp", false))
+}
+
+// test ListFiles should not return the directory itself
+func TestListFiles(t *testing.T) {
+	assert := assert.New(t)
+
+	_, filename, _, _ := runtime.Caller(0)
+	t.Logf("Current test filename: %s", filename)
+	t.Logf("Current test directory: %s", filepath.Dir(filename))
+
+	// change to the test directory
+	os.Chdir(filepath.Dir(filename))
+
+	// test recursive
+	dirEntry := file_cleaner.CreateDirEntry("data/listfile/", true)
+	_, fileMap := file_cleaner.ListFiles(dirEntry)
+	assert.NotContains(fileMap, "data/listfile/")
+	assert.NotContains(fileMap, "data/listfile/dir/")
+	assert.Contains(fileMap, "data/listfile/dir/listfile")
+
+	// test not recursive
+	dirEntry = file_cleaner.CreateDirEntry("data/listfile/", false)
+	_, fileMap = file_cleaner.ListFiles(dirEntry)
+	assert.NotContains(fileMap, "data/listfile/")
 }

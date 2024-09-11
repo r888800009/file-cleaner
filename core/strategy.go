@@ -27,11 +27,16 @@ type Strategy interface {
 
 func ListFiles(dirEntry DirEntry) (map[int64]([]FileEntry), map[string]FileEntry) {
 	recursively := dirEntry.recursively
+	includeDirs := dirEntry.include_dirs
 
 	// list all target files and create a map of size to file, is can chceck quickly if a file exists without reading the file
 	sizeIndex := make(map[int64]([]FileEntry))
 	fileMap := make(map[string]FileEntry)
 	filepath.Walk(dirEntry.path, func(path string, info os.FileInfo, err error) error {
+		if err != nil {
+			return err
+		}
+
 		// check if file is directory
 		if info.IsDir() && !recursively && path != dirEntry.path {
 			return filepath.SkipDir
@@ -39,6 +44,11 @@ func ListFiles(dirEntry DirEntry) (map[int64]([]FileEntry), map[string]FileEntry
 
 		// check is not match
 		if !dirEntry.Match(path) {
+			return nil
+		}
+
+		// skip if it is directory
+		if info.IsDir() && !includeDirs {
 			return nil
 		}
 

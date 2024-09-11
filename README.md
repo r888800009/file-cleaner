@@ -151,6 +151,11 @@ run the tests
 ```bash
 go test -v ./... -cover -coverpkg=./...
 ```
+and see the coverage
+```bash
+go test -v ./... -cover -coverpkg=./... -coverprofile=coverprofile.out
+go tool cover -html=coverprofile.out
+```
 
 using as a library currently not supported, but it might possible call the `file_cleaner` as a go package.
 there no guarantee of the stability of the API.
